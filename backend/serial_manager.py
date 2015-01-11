@@ -334,6 +334,7 @@ class SerialManagerClass:
 
 
     def process_status_line(self, line):
+	sys.stdout.write("Arduino output:" + line + "\n")
         if '#' in line[:3]:
             # print and ignore
             sys.stdout.write(line + "\n")

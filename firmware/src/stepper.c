@@ -229,13 +229,6 @@ ISR(TIMER1_COMPA_vect) {
       busy = false;
       return;    
     }
-    #ifndef DRIVEBOARD
-      else if (SENSE_POWER_OFF) {
-        stepper_request_stop(STATUS_POWER_OFF);
-        busy = false;
-        return;
-      }
-    #endif
   #endif
   
   // pulse steppers
@@ -496,6 +489,12 @@ static void homing_cycle(bool x_axis, bool y_axis, bool z_axis, bool reverse_dir
   uint8_t limit_bits;
   uint8_t x_overshoot_count = 6;
   uint8_t y_overshoot_count = 6;
+  //uint8_t z_overshoot_count = 6;  
+
+  bool sense_x1_limit = 0;
+  bool sense_x2_limit = 0;
+  bool sense_y1_limit = 0;
+  bool sense_y2_limit = 0;
   
   if (x_axis) { out_bits |= (1<<X_STEP_BIT); }
   if (y_axis) { out_bits |= (1<<Y_STEP_BIT); }
@@ -504,6 +503,7 @@ static void homing_cycle(bool x_axis, bool y_axis, bool z_axis, bool reverse_dir
   // Invert direction bits if this is a reverse homing_cycle
   if (reverse_direction) {
     out_bits ^= DIRECTION_MASK;
+    printString("reverse homing active\n");    
   }
   
   // Apply the global invert mask
@@ -511,14 +511,27 @@ static void homing_cycle(bool x_axis, bool y_axis, bool z_axis, bool reverse_dir
   
   // Set direction pins
   STEPPING_PORT = (STEPPING_PORT & ~DIRECTION_MASK) | (out_bits & DIRECTION_MASK);
-  
   for(;;) {
+    
     limit_bits = LIMIT_PIN;
     if (reverse_direction) {         
-      // Invert limit_bits if this is a reverse homing_cycle
       limit_bits ^= LIMIT_MASK;
     }
-    if (x_axis && !(limit_bits & (1<<X1_LIMIT_BIT))) {
+    /*
+      // Invert limit_bits if this is a reverse homing_cycle
+      sense_x1_limit = !((limit_bits >> X1_LIMIT_BIT) & 1);
+      sense_x2_limit = !((limit_bits >> X2_LIMIT_BIT) & 1);
+      sense_y1_limit = !((limit_bits >> Y1_LIMIT_BIT) & 1);
+      sense_y2_limit = !((limit_bits >> Y2_LIMIT_BIT) & 1);
+      printString("reverse homing step\n");
+    } else {
+      sense_x1_limit = ((limit_bits >> X1_LIMIT_BIT) & 1);
+      sense_x2_limit = ((limit_bits >> X2_LIMIT_BIT) & 1);
+      sense_y1_limit = ((limit_bits >> Y1_LIMIT_BIT) & 1);
+      sense_y2_limit = ((limit_bits >> Y2_LIMIT_BIT) & 1);
+    }*/
+    if (x_axis && (limit_bits & (1<<X1_LIMIT_BIT))) {
+    //if (x_axis && (sense_x1_limit || sense_x2_limit)) {
       if(x_overshoot_count == 0) {
         x_axis = false;
         out_bits ^= (1<<X_STEP_BIT);
@@ -526,7 +539,8 @@ static void homing_cycle(bool x_axis, bool y_axis, bool z_axis, bool reverse_dir
         x_overshoot_count--;
       }     
     } 
-    if (y_axis && !(limit_bits & (1<<Y1_LIMIT_BIT))) {
+    if (y_axis && (limit_bits & (1<<Y1_LIMIT_BIT))) {
+    //if (y_axis && (sense_y1_limit || sense_y2_limit)) {
       if(y_overshoot_count == 0) {
         y_axis = false;
         out_bits ^= (1<<Y_STEP_BIT);
@@ -534,14 +548,14 @@ static void homing_cycle(bool x_axis, bool y_axis, bool z_axis, bool reverse_dir
         y_overshoot_count--;
       }        
     }
-    // if (z_axis && !(limit_bits & (1<<Z1_LIMIT_BIT))) {
-    //   if(z_overshoot_count == 0) {
-    //     z_axis = false;
-    //     out_bits ^= (1<<Z_STEP_BIT);
-    //   } else {
-    //     z_overshoot_count--;
-    //   }        
-    // }
+    /*if (z_axis && !(limit_bits & (1<<Z1_LIMIT_BIT))) {
+       if(z_overshoot_count == 0) {
+         z_axis = false;
+         out_bits ^= (1<<Z_STEP_BIT);
+       } else {
+         z_overshoot_count--;
+       }        
+    }*/
     if(x_axis || y_axis || z_axis) {
         // step all axes still in out_bits
         STEPPING_PORT |= out_bits & STEPPING_MASK;
@@ -557,7 +571,7 @@ static void homing_cycle(bool x_axis, bool y_axis, bool z_axis, bool reverse_dir
 }
 
 static void approach_limit_switch(bool x, bool y, bool z) {
-  homing_cycle(x, y, z,false, 600);
+  homing_cycle(x, y, z, false, 300);
 }
 
 static void leave_limit_switch(bool x, bool y, bool z) {

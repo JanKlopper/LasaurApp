@@ -17,7 +17,7 @@ def flash_upload(serial_port, resources_dir, firmware_file, hardware='x86'):
         DEVICE = "atmega328p"
         CLOCK = "16000000"
         PROGRAMMER = "arduino"
-        BITRATE = "115200"
+        BITRATE = "57200" #"115200"
      
         if sys.platform == "darwin":  # OSX
             AVRDUDEAPP    = os.path.join(resources_dir, "firmware/tools_osx/avrdude")
@@ -60,7 +60,7 @@ def flash_upload(serial_port, resources_dir, firmware_file, hardware='x86'):
         DEVICE = "atmega328p"
         PROGRAMMER = "arduino"    # use this for bootloader
         SERIAL_OPTION = '-P %(port)s' % {'port':SERIAL_PORT}
-        BITRATE = "115200"
+        BITRATE = "57200" #115200"
 
         command = ('"%(dude)s" -c %(programmer)s -b %(bps)s %(serial_option)s -p %(device)s -C "%(dudeconf)s" -Uflash:w:"%(product)s":i' %
                   {'dude':AVRDUDEAPP, 'programmer':PROGRAMMER, 'bps':BITRATE, 'serial_option':SERIAL_OPTION, 'device':DEVICE, 'dudeconf':AVRDUDECONFIG, 'product':FIRMWARE})

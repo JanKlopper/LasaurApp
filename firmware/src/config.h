@@ -34,29 +34,19 @@
 #define BAUD_RATE 57600
 // #define DEBUG_IGNORE_SENSORS  // set for debugging
 
-
-#ifndef V1401
-  #define CONFIG_X_STEPS_PER_MM 32.80839895 //microsteps/mm (no integers, e.g. use 80.0 instead of 80)
-  #define CONFIG_Y_STEPS_PER_MM 32.80839895 //microsteps/mm (no integers, e.g. use 80.0 instead of 80)
-  #define CONFIG_Z_STEPS_PER_MM 32.80839895 //microsteps/mm (no integers, e.g. use 80.0 instead of 80)
-#else
-  #define CONFIG_X_STEPS_PER_MM 88.88888888 //microsteps/mm (no integers, e.g. use 80.0 instead of 80)
-  #define CONFIG_Y_STEPS_PER_MM 90.90909090 //microsteps/mm (no integers, e.g. use 80.0 instead of 80)
-  #define CONFIG_Z_STEPS_PER_MM 33.33333333 //microsteps/mm (no integers, e.g. use 80.0 instead of 80)
-#endif
+#define CONFIG_X_STEPS_PER_MM 97.014 //microsteps/mm (no integers, e.g. use 80.0 instead of 80)
+#define CONFIG_Y_STEPS_PER_MM 84.99 //microsteps/mm (no integers, e.g. use 80.0 instead of 80)
+#define CONFIG_Z_STEPS_PER_MM 32.80839895 //microsteps/mm (no integers, e.g. use 80.0 instead of 80)
 #define CONFIG_PULSE_MICROSECONDS 5
-#define CONFIG_FEEDRATE 8000.0 // in millimeters per minute
-#define CONFIG_SEEKRATE 8000.0
+#define CONFIG_FEEDRATE 9000.0 // in millimeters per minute
+#define CONFIG_SEEKRATE 9000.0
 #define CONFIG_ACCELERATION 1800000.0 // mm/min^2, typically 1000000-8000000, divide by (60*60) to get mm/sec^2
 #define CONFIG_JUNCTION_DEVIATION 0.006 // mm
 #define CONFIG_X_ORIGIN_OFFSET 5.0  // mm, x-offset of table origin from physical home
 #define CONFIG_Y_ORIGIN_OFFSET 5.0  // mm, y-offset of table origin from physical home
 #define CONFIG_Z_ORIGIN_OFFSET 0.0   // mm, z-offset of table origin from physical home
-#ifndef V1401
-  #define CONFIG_INVERT_X_AXIS 1  // 0 is regular, 1 inverts the y direction
-#else
-  #define CONFIG_INVERT_X_AXIS 0
-#endif
+
+#define CONFIG_INVERT_X_AXIS 1  // 0 is regular, 1 inverts the y direction
 #define CONFIG_INVERT_Y_AXIS 1  // 0 is regular, 1 inverts the y direction
 #define CONFIG_INVERT_Z_AXIS 1  // 0 is regular, 1 inverts the y direction
 
@@ -64,24 +54,15 @@
 #define SENSE_DDR               DDRD
 #define SENSE_PORT              PORTD
 #define SENSE_PIN               PIND
-#ifndef DRIVEBOARD
-  #define POWER_BIT             2
-#endif
 #define CHILLER_BIT             3
 #define DOOR_BIT                2
 
-#ifdef DRIVEBOARD
-  #define ASSIST_DDR            DDRD
-  #define ASSIST_PORT           PORTD
-  #define AIR_ASSIST_BIT        4
-  #define AUX1_ASSIST_BIT       7
-  #define AUX2_ASSIST_BIT       5
-#else
-  #define LIMITS_OVERWRITE_DDR  DDRD
-  #define LIMITS_OVERWRITE_PORT PORTD
-  #define LIMITS_OVERWRITE_BIT  7  
-#endif
-  
+#define ASSIST_DDR            DDRD
+#define ASSIST_PORT           PORTD
+#define AIR_ASSIST_BIT        4
+#define AUX1_ASSIST_BIT       7
+#define AUX2_ASSIST_BIT       5
+
 #define LIMIT_DDR               DDRC
 #define LIMIT_PORT              PORTC
 #define LIMIT_PIN               PINC
@@ -89,34 +70,21 @@
 #define X2_LIMIT_BIT            1
 #define Y1_LIMIT_BIT            2
 #define Y2_LIMIT_BIT            3
-#ifdef DRIVEBOARD
-  #define Z1_LIMIT_BIT          4
-  #define Z2_LIMIT_BIT          5
-#else
-  #define ASSIST_DDR            DDRC
-  #define ASSIST_PORT           PORTC
-  #define AIR_ASSIST_BIT        4
-  #define AUX1_ASSIST_BIT       5
-#endif
+#define Z1_LIMIT_BIT          	4
+#define Z2_LIMIT_BIT          	5
 
 #define STEPPING_DDR            DDRB
 #define STEPPING_PORT           PORTB
-#define X_STEP_BIT              0
-#define Y_STEP_BIT              1
+#define X_STEP_BIT              1
+#define Y_STEP_BIT              0
 #define Z_STEP_BIT              2
-#define X_DIRECTION_BIT         3
-#define Y_DIRECTION_BIT         4
+#define X_DIRECTION_BIT         4
+#define Y_DIRECTION_BIT         3
 #define Z_DIRECTION_BIT         5
 
+#define SENSE_MASK ((1<<CHILLER_BIT)|(1<<DOOR_BIT))
+#define LIMIT_MASK ((1<<X1_LIMIT_BIT)|(1<<X2_LIMIT_BIT)|(1<<Y1_LIMIT_BIT)|(1<<Y2_LIMIT_BIT)|(1<<Z1_LIMIT_BIT)|(1<<Z2_LIMIT_BIT))
 
-
-#ifdef DRIVEBOARD
-  #define SENSE_MASK ((1<<CHILLER_BIT)|(1<<DOOR_BIT))
-  #define LIMIT_MASK ((1<<X1_LIMIT_BIT)|(1<<X2_LIMIT_BIT)|(1<<Y1_LIMIT_BIT)|(1<<Y2_LIMIT_BIT)|(1<<Z1_LIMIT_BIT)|(1<<Z2_LIMIT_BIT))
-#else
-  #define SENSE_MASK ((1<<POWER_BIT)|(1<<CHILLER_BIT)|(1<<DOOR_BIT))
-  #define LIMIT_MASK ((1<<X1_LIMIT_BIT)|(1<<X2_LIMIT_BIT)|(1<<Y1_LIMIT_BIT)|(1<<Y2_LIMIT_BIT))
-#endif
 #define STEPPING_MASK ((1<<X_STEP_BIT)|(1<<Y_STEP_BIT)|(1<<Z_STEP_BIT))
 #define DIRECTION_MASK ((1<<X_DIRECTION_BIT)|(1<<Y_DIRECTION_BIT)|(1<<Z_DIRECTION_BIT))
 

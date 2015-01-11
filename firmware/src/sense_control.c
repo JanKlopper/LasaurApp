@@ -30,9 +30,9 @@ void sense_init() {
   SENSE_DDR &= ~(SENSE_MASK);  // set as input pins 
   // SENSE_PORT |= SENSE_MASK;    //activate pull-up resistors 
   
-  //// x1_lmit, x2_limit, y1_limit, y2_limit, z1_limit, z2_limit
-  LIMIT_DDR &= ~(LIMIT_MASK);  // set as input pins
-  // LIMIT_PORT |= LIMIT_MASK;    //activate pull-up resistors   
+  //// x1_limit, x2_limit, y1_limit, y2_limit, z1_limit, z2_limit
+  LIMIT_DDR = LIMIT_MASK;  // set as input pins
+  LIMIT_PORT &= LIMIT_MASK;    //activate pull-up resistors   
 }
 
 

@@ -71,7 +71,7 @@ def build():
     else:
         PROGRAMMER = "arduino"    # use this for bootloader
         SERIAL_OPTION = '-P %(port)s' % {'port':SERIAL_PORT}
-    BITRATE = "115200"
+    BITRATE = "57200"
 
     BUILDNAME = "LasaurGrbl"
     OBJECTS  = ["main", "serial", "gcode", "planner", "sense_control", "stepper"]
